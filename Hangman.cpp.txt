@@ -1,0 +1,116 @@
+#include <iostream>
+#include <string>
+#include <vector>
+
+using namespace std;
+
+class Hangman
+{
+private:
+    string wordToGuess;
+    string guessedWord;
+    int remainingAttempts;
+    vector<char> wrongGuesses;
+
+public:
+    Hangman(const string &word)
+    {
+        wordToGuess = word;
+        guessedWord = string(word.length(), '_'); 
+        remainingAttempts = 6;                    
+    }
+
+    void displayWord()
+    {
+        cout << "Word: " << guessedWord << endl;
+    }
+
+    void displayWrongGuesses()
+    {
+        cout << "Wrong guesses: ";
+        for (char ch : wrongGuesses)
+        {
+            cout << ch << " ";
+        }
+        cout << endl;
+    }
+
+    void displayRemainingAttempts()
+    {
+        cout << "Remaining attempts: " << remainingAttempts << endl;
+    }
+
+    bool makeGuess(char guess)
+    {
+        bool correctGuess = false;
+        for (size_t i = 0; i < wordToGuess.length(); ++i)
+        {
+            if (wordToGuess[i] == guess)
+            {
+                guessedWord[i] = guess;
+                correctGuess = true;
+            }
+        }
+
+        if (!correctGuess)
+        {
+            wrongGuesses.push_back(guess);
+            --remainingAttempts;
+        }
+
+        return correctGuess;
+    }
+
+    bool isGameWon() const
+    {
+        return guessedWord == wordToGuess;
+    }
+
+    bool isGameOver() const
+    {
+        return remainingAttempts <= 0;
+    }
+};
+
+int main()
+{
+    string word;
+    cout << "Enter the word to guess (hide from the player): ";
+    cin >> word; 
+
+    Hangman game(word);
+
+    cout << "\n\n--- Welcome to Hangman ---\n";
+    while (!game.isGameOver() && !game.isGameWon())
+    {
+        game.displayWord();
+        game.displayWrongGuesses();
+        game.displayRemainingAttempts();
+
+        char guess;
+        cout << "Enter your guess: ";
+        cin >> guess;
+
+        if (game.makeGuess(guess))
+        {
+            cout << "Good guess!\n";
+        }
+        else
+        {
+            cout << "Wrong guess!\n";
+        }
+
+        cout << endl;
+    }
+
+    if (game.isGameWon())
+    {
+        cout << "Congratulations! You guessed the word: " << word << endl;
+    }
+    else
+    {
+        cout << "Game over! The word was: " << word << endl;
+    }
+
+    return 0;
+}
